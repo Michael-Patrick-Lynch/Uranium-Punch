@@ -2,6 +2,7 @@ import pygame
 from pygame import *
 from setup_code import *
 from spritesheet import *
+from globals import *
 pygame.init()
 
 # extractSprites is a function I got from stackoverflow
@@ -23,6 +24,7 @@ def extractSprites(rows, columns, sprite_width, sprite_height, sprites, name_of_
             sprites.append(scaled_sprite)
 
 class Troop(pygame.sprite.Sprite):
+    global listOfTroops, listOfBullets
     
     speed = 8
     attack_damage = 20
@@ -30,7 +32,6 @@ class Troop(pygame.sprite.Sprite):
     attack_range = 30
     blocked = False
     
-
     activity = ADVANCING # activity attribute will determine what animation plays and what the troop is doing
     # 'advancing' means the troop moves forward. True if blocked is False and enemy_in_range is False
     # 'idling' means the troop stands still. True if blocked is True and enemy_in_range is False
@@ -69,6 +70,7 @@ class Troop(pygame.sprite.Sprite):
     
 # attack due is set to False since this is a shooting troop
 class Infantry(Troop):
+    global listOfBullets
     rows = 1
     columns = 11
     sprites = []
@@ -284,15 +286,15 @@ class PlayerTotem(Troop):
     sprites = []
     updateImgEvent = USEREVENT + 2
 
-    extractSprites(1, 4, 106, 77, sprites, 'spaceship-unit.png', 106, 77)
+    extractSprites(1, 4, 106, 77, sprites, 'spaceship-unit.png', 106*2, 77*2)
 
     current_sprite = 0
     
 
     def __init__(self):
-        self.rect = pygame.Rect(0,500,106,77)
+        self.rect = pygame.Rect(GAME_RECT.left,475,106,77)
         self.enemy_in_range = False
-        self.health = 1000
+        self.health = 50
         self.image = self.sprites[self.current_sprite]
 
     def updateImage(self):
@@ -305,6 +307,7 @@ class PlayerTotem(Troop):
 
 
 class Enemy(pygame.sprite.Sprite):
+    global listOfEnemies
         
     speed = 1
     attack_damage = 20
@@ -531,6 +534,7 @@ class EnemyTotem(Enemy):
 
 
 class Drill():
+    global listOfBuildings
     metal_produced_per_second = 20
 
     metal_building_cost = 100
@@ -557,6 +561,7 @@ class Drill():
         self.resource_system.change_Metal_Level(Drill.metal_produced_per_second)
 
 class Reactor(): 
+    global listOfBuildings
     energy_produced_per_second = 10 # the reactor turns uranium into energy at this rate
     uranium_cost_per_second = 10
 
@@ -585,6 +590,7 @@ class Reactor():
             self.resource_system.change_Uranium_Level(-Reactor.uranium_cost_per_second)
 
 class Lab():
+    global listOfBuildings
     research_produced_per_second = 1
 
     metal_building_cost = 500
@@ -612,6 +618,8 @@ class Lab():
         
 
 class WaveOfEnemies():
+    global listOfEnemies#, listOfWaves
+
     
     startWaveEvent = USEREVENT + 5
 
@@ -619,11 +627,12 @@ class WaveOfEnemies():
         self.list_of_flying_aliens_in_the_wave = [FlyingEnemy(the_games_resource_system) for i in range(no_of_flys)]
         self.list_of_walking_aliens_in_the_wave = [WalkingEnemy(the_games_resource_system) for i in range(no_of_walking)]
         self.list_of_dog_aliens_in_the_wave = [DogEnemy(the_games_resource_system) for i in range(no_of_dog)]
-
         self.the_games_resource_system = the_games_resource_system
-    
+        # listOfWaves.append(self)
+        
 
     def startWave(self):
+        global listOfEnemies
         x_offset = 0
         for flyingEnemy in self.list_of_flying_aliens_in_the_wave:
             flyingEnemy.rect.x += x_offset
@@ -644,6 +653,7 @@ class WaveOfEnemies():
             x_offset += 80
         
 class Tank(Troop):
+    global listOfTanks, listOfTroops
 
     sprites = []
 
@@ -721,7 +731,9 @@ class Tank(Troop):
 
 
 class Bullet(pygame.sprite.Sprite): # needs a rect to store location, update function, image, advance function to update location, init function to take in troop firing as paramater
+    global listOfExplosions, listOfBullets
     speed = 50
+    num_bullets = 0
 
     sprite_width = 11 # the bullet images are 11 x 4 in the sprite sheet
     sprite_height = 4
@@ -743,7 +755,9 @@ class Bullet(pygame.sprite.Sprite): # needs a rect to store location, update fun
     image = sprites[0]
 
     def __init__(self, troop_firing_the_bullet: Troop):
+        Bullet.num_bullets += 1
         troop_rect = troop_firing_the_bullet.rect
+        class_attributes_of_troop_that_fired = type(troop_firing_the_bullet).__dict__
         if isinstance(troop_firing_the_bullet, Tank):
             self.rect = pygame.Rect(troop_rect.right - 60, troop_rect.top + 45, self.bullet_width * 2, self.bullet_height * 2)
             self.image = self.tank_bullet_sprites[0]
@@ -751,12 +765,14 @@ class Bullet(pygame.sprite.Sprite): # needs a rect to store location, update fun
             self.rect = pygame.Rect(troop_rect.right, troop_rect.top + 45, self.bullet_width, self.bullet_height) # to adapt this to other types fo troop other than infantry, im going to need to have an if statment e.g if troop_firing: type == lightinfanttry: then construct the rect with this y value (which will corrospond to the height of the gun) needed for each troop type 
             self.image = self.sprites[0]
 
-        self.troop_that_fired_me = troop_firing_the_bullet
+        #self.troop_that_fired_me = troop_firing_the_bullet
+        self.type_of_troop_that_fired_me = type(troop_firing_the_bullet)
+        self.damage_of_this_bullet = class_attributes_of_troop_that_fired['attack_damage']
         self.mask = pygame.mask.from_surface(self.image)
 
 
     def updateImage(self):
-        if isinstance(self.troop_that_fired_me, Tank):
+        if self.type_of_troop_that_fired_me == Tank:
             if self.image == self.tank_bullet_sprites[0]:
                 self.image = self.tank_bullet_sprites[1]
             else:
@@ -773,13 +789,15 @@ class Bullet(pygame.sprite.Sprite): # needs a rect to store location, update fun
         self.rect.x += self.speed
 
     def bulletImpact(self, enemy_hit: Enemy):
-        if isinstance(self.troop_that_fired_me, Tank):
+        if self.type_of_troop_that_fired_me == Tank:
             listOfExplosions.append(Explosion(self, enemy_hit))
         
-        bullet_that_hit_him = self
-        enemy_hit.health -= bullet_that_hit_him.troop_that_fired_me.attack_damage
-        listOfBullets.remove(self)
+        enemy_hit.health -= self.damage_of_this_bullet
+        if self in listOfBullets:
+            listOfBullets.remove(self)
+
         del(self)
+        Bullet.num_bullets -= 1
         
 
 class ResourceSystem():

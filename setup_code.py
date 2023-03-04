@@ -1,14 +1,17 @@
 import pygame
 from pygame import *
+from globals import *
 pygame.init()
 
 
 ground_colour = (25,30,25)
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 floor_level = 600
 scroll_speed = 12
 distance_between_building_centroids = 86
+#time_between_waves = 50
 
 # setting up window
 SCREEN_WIDTH = 1400
@@ -146,23 +149,41 @@ USER_INTERFACE_SURF = pygame.surface.Surface((2800, 100))
 pygame.mixer.music.load('industrial.mp3')
 # pygame.mixer.music.play(-1, 0)
 
+# to reset the game or start the first game
+def setup_game():
+    print("setup_game() executed")
+    global listOfBuildings,listOfTroops, listOfTroop_sorted_according_to_x_co_ord, listOfEnemies, listOfEnemies_sorted_according_to_x_co_ord, listOfBullets, listOfTanks, listOfExplosions
+    global GAME_RECT, background_building_rect
 
-#lists
-listOfDrills = []
-listOfReactors = []
-listOfLabs = []
-listOfBuildings = []
+    GAME_RECT.left, background_building_rect.left = 0, 0
+    listOfBuildings.clear()
+    print(id(listOfTroops))
+    listOfTroops.clear()
+    print(id(listOfTroops))
+    print("******************************************************************")
+    print("******************************************************************")
+    print("******************************************************************")
+    print("******************************************************************")
+    print("******************************************************************")
+    listOfTroop_sorted_according_to_x_co_ord.clear()
 
-listOfTroops = []
-listOfTroop_sorted_according_to_x_co_ord = []
+    listOfEnemies.clear()
+    listOfEnemies_sorted_according_to_x_co_ord.clear()
 
-listOfEnemies = []
-listOfEnemies_sorted_according_to_x_co_ord = []
+    listOfBullets.clear()
 
-listOfBullets = []
+    listOfTanks.clear() # since tanks fire only every 2 seconds
+    listOfExplosions.clear()
 
-listOfTanks = [] # since tanks fire only every 2 seconds
-listOfExplosions = []
+
+
+# health
+heartimg = pygame.transform.scale(pygame.image.load('heart.png'), (50, 50))
+heart_rect = pygame.Rect(250, 100, 50, 50)
+heart_rect.center = (250, 100)
+player_health = 1000
+player_health_font = pygame.font.Font('Pixeltype.ttf', 60)
+
 
 
 
