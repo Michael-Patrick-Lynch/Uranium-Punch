@@ -1,3 +1,5 @@
+import pygame
+
 listOfBuildings = []
 
 listOfTroops = []
@@ -10,3 +12,7 @@ listOfBullets = []
 
 listOfTanks = [] # since tanks fire only every 2 seconds
 listOfExplosions = []
+
+listOfWaves = []
+
+map_rect = pygame.Rect(0, 0, 2800, 700)

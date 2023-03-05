@@ -41,7 +41,7 @@ class Troop(pygame.sprite.Sprite):
 
 
     def __init__(self):
-        self.rect = pygame.Rect(0,0,0,0)
+        self.rect = pygame.Rect(map_rect.left,0,0,0)
         self.enemy_in_range = False
         self.health = 100
 
@@ -99,7 +99,7 @@ class Infantry(Troop):
 
     def __init__(self, resource_system):
         
-        self.rect = pygame.Rect(GAME_RECT.left + 20, floor_level, self.width_of_infantry, self.height_of_infantry)
+        self.rect = pygame.Rect(map_rect.left + 20, floor_level, self.width_of_infantry, self.height_of_infantry)
         self.rect.bottom = floor_level + 5
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -166,7 +166,7 @@ class LightInfantry(Troop):
 
     def __init__(self, resource_system):
         
-        self.rect = pygame.Rect(GAME_RECT.left + 50, floor_level, self.width_of_infantry, self.height_of_infantry)
+        self.rect = pygame.Rect(map_rect.left + 20, floor_level, self.width_of_infantry, self.height_of_infantry)
         self.rect.bottom = floor_level + 5
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -243,7 +243,7 @@ class Wizard(Troop):
 
     def __init__(self, resource_system):
         
-        self.rect = pygame.Rect(GAME_RECT.left + 20, floor_level, self.width_of_infantry, self.height_of_infantry)
+        self.rect = pygame.Rect(map_rect.left + 20, floor_level, self.width_of_infantry, self.height_of_infantry)
         self.rect.bottom = floor_level - 10
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -292,7 +292,7 @@ class PlayerTotem(Troop):
     
 
     def __init__(self):
-        self.rect = pygame.Rect(GAME_RECT.left,475,106,77)
+        self.rect = pygame.Rect(map_rect.left + 20, 475, 106, 77)
         self.enemy_in_range = False
         self.health = 50
         self.image = self.sprites[self.current_sprite]
@@ -379,7 +379,7 @@ class FlyingEnemy(Enemy):
 
     def __init__(self, that_games_resource_system):
         
-        self.rect = pygame.Rect(GAME_RECT.right, floor_level, self.width_of_enemy, self.height_of_enemy)
+        self.rect = pygame.Rect(map_rect.right, floor_level, self.width_of_enemy, self.height_of_enemy)
         self.rect.bottom = floor_level + 5
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -428,7 +428,7 @@ class WalkingEnemy(Enemy):
 
     def __init__(self, that_games_resource_system ):
         
-        self.rect = pygame.Rect(GAME_RECT.right, floor_level, self.width_of_enemy, self.height_of_enemy)
+        self.rect = pygame.Rect(map_rect.right, floor_level, self.width_of_enemy, self.height_of_enemy)
         self.rect.bottom = floor_level + 10
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -480,7 +480,7 @@ class DogEnemy(Enemy):
         self.speed = 4
         self.current_sprite = 0
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect = pygame.Rect(GAME_RECT.right, floor_level, self.width_of_enemy, self.height_of_enemy)
+        self.rect = pygame.Rect(map_rect.right, floor_level, self.width_of_enemy, self.height_of_enemy)
         self.rect.bottom = floor_level + 100
         self.image = self.sprites[0]   
         self.shooting = False
@@ -545,7 +545,7 @@ class Drill():
 
 
     def __init__(self, resource_system):
-        self.rect = pygame.Rect(GAME_RECT.left + 900, floor_level, self.width_of_sprite, self.height_of_sprite)
+        self.rect = pygame.Rect(map_rect.left + 900, floor_level, self.width_of_sprite, self.height_of_sprite)
         self.rect.bottom = floor_level + 5
         self.image = pygame.transform.scale(pygame.image.load('drill.png'), (60, 90))
         self.mask = pygame.mask.from_surface(self.image)
@@ -554,7 +554,7 @@ class Drill():
         if len(listOfBuildings) >= 1:
             self.rect.centerx = listOfBuildings[-1].rect.centerx + distance_between_building_centroids
         else:
-            self.rect.centerx = GAME_RECT.left + 200
+            self.rect.centerx = map_rect.left + 400
 
 
     def produceRelevantResource(self):
@@ -573,7 +573,7 @@ class Reactor():
     
 
     def __init__(self, resource_system):
-        self.rect = pygame.Rect(GAME_RECT.left + 900, floor_level, self.width_of_sprite, self.height_of_sprite)
+        self.rect = pygame.Rect(map_rect.left + 900, floor_level, self.width_of_sprite, self.height_of_sprite)
         self.rect.bottom = floor_level + 5
         self.image = pygame.transform.scale(pygame.image.load('energy-station1.png'), (60, 90))
         self.mask = pygame.mask.from_surface(self.image)
@@ -582,7 +582,7 @@ class Reactor():
         if len(listOfBuildings) >= 1:
             self.rect.centerx = listOfBuildings[-1].rect.centerx + distance_between_building_centroids
         else:
-            self.rect.centerx = GAME_RECT.left + 200
+            self.rect.centerx = map_rect.left + 400
 
     def produceRelevantResource(self):
         if self.resource_system.uranium_level >= 10:
@@ -602,7 +602,7 @@ class Lab():
 
 
     def __init__(self, resource_system):
-        self.rect = pygame.Rect(GAME_RECT.left + 900, floor_level, self.width_of_sprite, self.height_of_sprite)
+        self.rect = pygame.Rect(map_rect.left + 900, floor_level, self.width_of_sprite, self.height_of_sprite)
         self.rect.bottom = floor_level + 5
         self.image = pygame.transform.scale(pygame.image.load('trading_hut.png'), (80, 90))
         self.mask = pygame.mask.from_surface(self.image)
@@ -611,14 +611,14 @@ class Lab():
         if len(listOfBuildings) >= 1:
             self.rect.centerx = listOfBuildings[-1].rect.centerx + distance_between_building_centroids
         else:
-            self.rect.centerx = GAME_RECT.left + 200
+            self.rect.centerx = map_rect.left + 400
 
     def produceRelevantResource(self):
         self.resource_system.change_Research_Level(self.research_produced_per_second)
         
 
 class WaveOfEnemies():
-    global listOfEnemies#, listOfWaves
+    global listOfEnemies, listOfWaves, map_rect
 
     
     startWaveEvent = USEREVENT + 5
@@ -628,29 +628,29 @@ class WaveOfEnemies():
         self.list_of_walking_aliens_in_the_wave = [WalkingEnemy(the_games_resource_system) for i in range(no_of_walking)]
         self.list_of_dog_aliens_in_the_wave = [DogEnemy(the_games_resource_system) for i in range(no_of_dog)]
         self.the_games_resource_system = the_games_resource_system
-        # listOfWaves.append(self)
+        listOfWaves.append(self)
         
 
     def startWave(self):
-        global listOfEnemies
-        x_offset = 0
-        for flyingEnemy in self.list_of_flying_aliens_in_the_wave:
-            flyingEnemy.rect.x += x_offset
-            flyingEnemy.resource_system = self.the_games_resource_system
-            listOfEnemies.append(flyingEnemy)
-            x_offset += 80
         
-        for walkingEnemy in self.list_of_walking_aliens_in_the_wave:
-            walkingEnemy.rect.x += x_offset
-            walkingEnemy.resource_system = self.the_games_resource_system
-            listOfEnemies.append(walkingEnemy)
-            x_offset += 80
+        # I want this function to spawn all of the enemies in the wave, one after the other
+        # I want the first enemy in the wave to be spawned either behind the rear enemy in game or just left of 
+        # map_rect.right. Whichever is further left
 
-        for dogEnemy in self.list_of_dog_aliens_in_the_wave:
-            dogEnemy.rect.x += x_offset
-            dogEnemy.resource_system = self.the_games_resource_system
-            listOfEnemies.append(dogEnemy)
-            x_offset += 80
+        # so I will need to keep track of a variable called rear_most_enemy
+       
+        global listOfEnemies
+        
+        if len(listOfEnemies) == 0:
+            x_pos = map_rect.right  # first wave, start from right edge
+        else:
+            rightmost_enemy = max(listOfEnemies, key=lambda e: e.rect.right)
+            x_pos = max(map_rect.right, rightmost_enemy.rect.right + 50)  # spawn 50px behind rightmost enemy
+        
+        for enemy in self.list_of_flying_aliens_in_the_wave + self.list_of_walking_aliens_in_the_wave:
+            enemy.rect.right = x_pos
+            x_pos += enemy.rect.width + 40  # add some padding between enemies
+            listOfEnemies.append(enemy)
         
 class Tank(Troop):
     global listOfTanks, listOfTroops
@@ -666,8 +666,8 @@ class Tank(Troop):
     attack_damage = 10000
     health = 1000
 
-    metal_cost = 400
-    energy_cost = 100
+    metal_cost = 800
+    energy_cost = 250
     
     updateImgEvent = USEREVENT + 2
     purchase_cooldown_over = USEREVENT + 3
@@ -690,7 +690,7 @@ class Tank(Troop):
 
     def __init__(self, resource_system):
         
-        self.rect = pygame.Rect(GAME_RECT.left + 20, floor_level, self.width_of_tank, self.height_of_tank)
+        self.rect = pygame.Rect(map_rect.left + 20, floor_level, self.width_of_tank, self.height_of_tank)
         self.rect.bottom = floor_level
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -698,8 +698,8 @@ class Tank(Troop):
         self.enemy_in_range = False
         
         self.resource_system = resource_system
-        self.resource_system.metal_level -= Wizard.metal_cost
-        self.resource_system.energy_level -= Wizard.energy_cost
+        self.resource_system.metal_level -= Tank.metal_cost
+        self.resource_system.energy_level -= Tank.energy_cost
         self.attack_due = self.enemy_in_range
         listOfTanks.append(self)
         
@@ -804,9 +804,9 @@ class ResourceSystem():
 
 
     def __init__(self):
-        self.metal_level = 9999
-        self.uranium_level = 9999
-        self.energy_level = 9999
+        self.metal_level = 100
+        self.uranium_level = 100
+        self.energy_level = 100
         self.research_level = 0
         self.number_of_troops = 0
 
@@ -864,7 +864,7 @@ class Knight(Troop):
 
     def __init__(self, resource_system):
         
-        self.rect = pygame.Rect(GAME_RECT.left + 20, floor_level, self.width_of_knight, self.height_of_knight)
+        self.rect = pygame.Rect(map_rect.left + 20, floor_level, self.width_of_knight, self.height_of_knight)
         self.rect.bottom = floor_level + 5
         self.image = self.sprites[0]
         self.mask = pygame.mask.from_surface(self.image)

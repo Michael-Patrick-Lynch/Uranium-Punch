@@ -20,19 +20,32 @@ def rungame():
     global listOfBuildings,listOfTroops, listOfTroop_sorted_according_to_x_co_ord, listOfEnemies, listOfEnemies_sorted_according_to_x_co_ord, listOfBullets, listOfTanks, listOfExplosions
     print("game started")
     setup_game()
+    wave_counter = 0
     # create resource system, player/enemy totem, and enemy wave objects
+
+
     myResourceSystem = ResourceSystem()
-    myWave = WaveOfEnemies(9, 9, 0, myResourceSystem)
-    myWave.startWave()
     player_totem = PlayerTotem()
     enemy_totem = EnemyTotem(myResourceSystem)
     listOfTroops.append(player_totem)
     listOfEnemies.append(enemy_totem)
+
+    myWave = WaveOfEnemies(3, 0, 0, myResourceSystem)
+    myWave2 = WaveOfEnemies(0, 2, 0, myResourceSystem)
+    myWave3 = WaveOfEnemies(5, 0, 0, myResourceSystem)
+
+    
+    # myWave3 = WaveOfEnemies(20, 0, 0, myResourceSystem)
+    # myWave4 = WaveOfEnemies(0, 8, 0, myResourceSystem)
+    # myWave5 = WaveOfEnemies(20, 8, 0, myResourceSystem)
+    # important: Never start a wave at the very start of the game (it will cause that wave to be started twice since it will be started in
+    # again when the startWaveEvent is triggered)
+    pygame.time.set_timer(WaveOfEnemies.startWaveEvent, time_between_waves)
+
+    
     # main game loop
     while True:
-        print(id(listOfTroops))
 
-        
 
         # this code handles the interaction between the sprites (when they get in each others way, when they should attack each other etc)
         listOfTroop_sorted_according_to_x_co_ord = sorted(listOfTroops)
@@ -49,7 +62,7 @@ def rungame():
             leading_enemy.blocked = False
 
         for i in range(len(listOfEnemies_sorted_according_to_x_co_ord) -1 ): # what this means is that if the enemy in front is blocked and you come close to them, you're blocked too
-            if listOfEnemies_sorted_according_to_x_co_ord[i+1].blocked == True and listOfEnemies_sorted_according_to_x_co_ord[i+1].rect.left <= listOfEnemies_sorted_according_to_x_co_ord[i].rect.right:
+            if listOfEnemies_sorted_according_to_x_co_ord[i+1].blocked == True and listOfEnemies_sorted_according_to_x_co_ord[i+1].rect.right + 10 >= listOfEnemies_sorted_according_to_x_co_ord[i].rect.left:
                 listOfEnemies_sorted_according_to_x_co_ord[i].blocked = True
             else:
                 listOfEnemies_sorted_according_to_x_co_ord[i].blocked = False
@@ -106,6 +119,8 @@ def rungame():
                 bullet.rect.x -= scroll_speed
             
             user_interface_rect.x -= scroll_speed
+            map_rect.x -= scroll_speed
+
 
             background_building_rect.x -= scroll_speed * .5
             GAME_RECT.x -= scroll_speed * .25
@@ -125,6 +140,7 @@ def rungame():
                 bullet.rect.x += scroll_speed
 
             user_interface_rect.x += scroll_speed
+            map_rect.x += scroll_speed
 
             background_building_rect.x += scroll_speed * .5
             GAME_RECT.x += scroll_speed * .25
@@ -144,11 +160,29 @@ def rungame():
                     if enemy.enemy_in_range == True:
                         leading_troop.health -= enemy.attack_damage
 
+                print(f"                                                         x-cord of rear enemy:{listOfEnemies_sorted_according_to_x_co_ord[0].rect.x}")
+                print(f"x-cord of leading enemy:{listOfEnemies_sorted_according_to_x_co_ord[-1].rect.x}")
+                print(f"                                                                                                                        {GAME_RECT.right} ")
             if event.type == two_seconds_have_passed:
                 pygame.time.set_timer(two_seconds_have_passed, 2000)
                 for tank in listOfTanks:
                     if tank.activity == ATTACKING:
                         listOfBullets.append(Bullet(tank))
+
+            if event.type == WaveOfEnemies.startWaveEvent:
+                    print(f"length of list of waves: {len(listOfWaves)}")
+                    
+                    if wave_counter < len(listOfWaves):
+                        print("wave started")
+                        listOfWaves[wave_counter].startWave()
+                        print(f"Here is the info on the wave that was started: {listOfWaves[wave_counter]}")
+                        wave_counter += 1
+                        pygame.time.set_timer(WaveOfEnemies.startWaveEvent, time_between_waves)
+                    else: 
+                        pygame.time.set_timer(WaveOfEnemies.startWaveEvent, 0) # disables the timer
+
+                    
+
                 
             
             if event.type == Infantry.updateImgEvent:
@@ -191,11 +225,11 @@ def rungame():
                 if wizard_icon_rect.collidepoint(mousePosition) and myResourceSystem.metal_level >= Wizard.metal_cost and myResourceSystem.energy_level >= Wizard.energy_cost:
                     listOfTroops.append(Wizard(myResourceSystem))
 
-                if tank_icon_rect.collidepoint(mousePosition):
+                if tank_icon_rect.collidepoint(mousePosition) and myResourceSystem.metal_level >= Tank.metal_cost and myResourceSystem.energy_level >= Tank.energy_cost:
                     listOfTroops.append(Tank(myResourceSystem))
 
-                if knight_icon_rect.collidepoint(mousePosition):
-                    listOfTroops.append(Knight(myResourceSystem))
+                # if knight_icon_rect.collidepoint(mousePosition):
+                #     listOfTroops.append(Knight(myResourceSystem))
                 
 
 
@@ -222,7 +256,7 @@ def rungame():
         SCREEN.blit(infantry_icon, infantry_icon_rect)
         SCREEN.blit(light_infantry_icon_image, light_infantry_icon_rect)
 
-        SCREEN.blit(knight_icon_image, knight_icon_rect)
+        # SCREEN.blit(knight_icon_image, knight_icon_rect)
         SCREEN.blit(wizard_icon_image, wizard_icon_rect)
         SCREEN.blit(tank_icon_image, tank_icon_rect)
 
@@ -408,6 +442,7 @@ def checkForKeyPress(): # returns the first key pressed. unless esc or quit are 
 def terminate():
     pygame.quit()
     sys.exit()
+
 
 if __name__ == '__main__':
     main()

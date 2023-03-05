@@ -11,7 +11,8 @@ BLACK = (0, 0, 0)
 floor_level = 600
 scroll_speed = 12
 distance_between_building_centroids = 86
-#time_between_waves = 50
+time_between_waves = 10000
+
 
 # setting up window
 SCREEN_WIDTH = 1400
@@ -78,9 +79,9 @@ light_infantry_icon_image = pygame.image.load('light_infantry_icon.png')
 light_infantry_icon_rect = pygame.Rect(50, 25, 50, 50)
 light_infantry_icon_rect.center = (900, 650)
 
-knight_icon_image = pygame.image.load('knight_icon.png')
-knight_icon_rect = pygame.Rect(50, 25, 50, 50)
-knight_icon_rect.center = (970, 650)
+# knight_icon_image = pygame.image.load('knight_icon.png')
+# knight_icon_rect = pygame.Rect(50, 25, 50, 50)
+# knight_icon_rect.center = (970, 650)
 
 infantry_icon = pygame.image.load('space_marine_icon.png')
 infantry_icon_rect = pygame.Rect(50, 25, 50, 50)
@@ -147,7 +148,7 @@ USER_INTERFACE_SURF = pygame.surface.Surface((2800, 100))
 
 # music
 pygame.mixer.music.load('industrial.mp3')
-# pygame.mixer.music.play(-1, 0)
+pygame.mixer.music.play(-1, 0)
 
 # to reset the game or start the first game
 def setup_game():
